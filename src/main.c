@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/07 21:09:11 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/10 18:32:46 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,41 +38,40 @@
 // 	return (0);
 // }
 
-int	main(int argc, char **argv)
+void	pipex(int fd_in, int fd_out, char **argv)
 {
 	int		fd[2];
-	int		pid1;
-	int		pid2;
-	// char	*argvec[] = {"ls", "-l", NULL};
-	// char	*argvec2[] = {"grep", "Makefile", NULL};
+	pid_t	pid1;
+	char	*argvec[] = {"ls", "-l", NULL};
+	char	*argvec2[] = {"wc", "-w", NULL};
 
-	(void) argc;
-	(void) argv;
 	if (pipe (fd) == -1)
-		return (1);
+		exit (1);
 	pid1 = fork ();
 	if (pid1 == -1)
-		return (1);
+		exit (1);
 	else
 	{
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[0]);
-		close(fd[1]);
-		// execve ("/bin/ls", argvec, NULL);
+		execve ("/bin/ls", argvec, NULL);
 	}
-	pid2 = fork ();
-	if (pid2 == -1)
+	waitpid (pid1, NULL, 0);
+	dup2(fd[0], STDIN_FILENO);
+	close(fd[1]);
+	execve ("usr/bin/wc", argvec2, NULL);
+}
+
+int	main(int argc, char **argv)
+{
+	int	fd_in;
+	int	fd_out;
+
+	fd_in = open ("infile.txt", O_RDONLY);
+	fd_out = open ("outfile.txt", O_WRONLY);
+	if (fd_in < 0 || fd_out < 0)
 		return (1);
 	else
-	{
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[1]);
-		close(fd[0]);
-		// execve ("usr/bin/grep", argvec2, NULL);
-	}
-	close(fd[0]);
-	close(fd[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
+		pipex(fd_in, fd_out, argv, envp);
 	return (0);
 }

@@ -1,0 +1,7 @@
+Makefile
+a.out
+inc
+infile.txt
+libft
+outfile.txt
+src
