@@ -1,31 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_abs.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/15 10:57:58 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/12 12:35:34 by oroy             ###   ########.fr       */
+/*   Created: 2023/06/15 18:55:17 by oroy              #+#    #+#             */
+/*   Updated: 2023/06/30 22:13:23 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/libft.h"
 
-char	*ft_strchr(const char *s, int c)
+int	ft_abs(int n)
 {
-	char	*ptr;
-
-	if (!s)
-		return (NULL);
-	ptr = (char *)s;
-	while (*ptr)
-	{
-		if (*ptr == (char)c)
-			return (ptr);
-		ptr++;
-	}
-	if (*ptr == (char)c)
-		return (ptr);
-	return (NULL);
+	if (n < 0)
+		n *= -1;
+	return (n);
 }

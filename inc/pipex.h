@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/07 20:30:30 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/12 12:39:20 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "../libft/inc/libft.h"
 # include <sys/wait.h>
 # include <stdio.h>
+# include <fcntl.h>
 
 
 #endif

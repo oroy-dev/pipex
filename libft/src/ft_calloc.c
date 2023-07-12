@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/05 21:42:08 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/12 12:35:34 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,19 @@ void	*ft_calloc(size_t count, size_t size)
 {
 	void	*mem;
 	size_t	total;
+	size_t	i;
 
 	if (count >= SIZE_MAX || size >= SIZE_MAX)
 		return (NULL);
+	i = 0;
 	total = count * size;
 	mem = malloc(total);
 	if (!mem)
 		return (NULL);
-	ft_bzero(mem, total);
+	while (i < total)
+	{
+		*((unsigned char *)mem + i) = '\0';
+		i++;
+	}
 	return (mem);
 }

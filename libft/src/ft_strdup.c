@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 11:48:01 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/05 21:42:08 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/12 12:35:34 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*ft_strdup(const char *s1)
 	if (!s1)
 		return (NULL);
 	i = 0;
-	dst = ft_calloc(ft_strlen(s1) + 1, sizeof(unsigned char));
+	dst = malloc (sizeof(unsigned char) * (ft_strlen(s1) + 1));
 	if (!dst)
 		return (NULL);
 	while (s1[i])
