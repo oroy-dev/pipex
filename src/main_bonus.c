@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/14 15:17:14 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/14 19:36:27 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,37 +30,48 @@ char	*path_to_exec(char **pathlist, char *cmd)
 	return (path);
 }
 
-void	pipex(int in, int out, char **argv, char **pathlist)
+void	pipex(int in, int out, char **argv, char **pathlist, int argc)
 {
 	int		fd_pipe[2];
-	char	**cmd1;
-	char	**cmd2;
+	char	**cmd;
 	char	*path;
 	pid_t	pid1;
+	int		i;
 
-	if (pipe (fd_pipe) == -1)
-		exit (EXIT_FAILURE);
-	cmd1 = ft_split(argv[2], ' ');
-	cmd2 = ft_split(argv[3], ' ');
-	pid1 = fork ();
-	if (pid1 == -1)
-		exit (EXIT_FAILURE);
-	else if (!pid1)
+	i = 2;
+	while (i < argc - 2)
 	{
-		dup2 (in, STDIN_FILENO);
-		dup2 (fd_pipe[1], STDOUT_FILENO);
+		if (pipe (fd_pipe) == -1)
+			exit (EXIT_FAILURE);
+		pid1 = fork ();
+		if (pid1 == -1)
+			exit (EXIT_FAILURE);
+		else if (!pid1)
+		{
+			dup2 (in, STDIN_FILENO);
+			dup2 (fd_pipe[1], STDOUT_FILENO);
+			close (fd_pipe[0]);
+			cmd = ft_split(argv[i], ' ');
+			path = path_to_exec(pathlist, cmd[0]);
+			execve (path, cmd, NULL);
+			free (path);
+			close (fd_pipe[1]);
+			exit (EXIT_SUCCESS);
+		}
+		waitpid (pid1, NULL, 0);
+		// dup2 (fd_pipe[0], STDIN_FILENO);
+		dup2 (in, fd_pipe[0]);
+		close (fd_pipe[1]);
 		close (fd_pipe[0]);
-		path = path_to_exec(pathlist, cmd1[0]);
-		execve (path, cmd1, NULL);
-		free (path);
-		exit (EXIT_SUCCESS);
+		i++;
 	}
-	waitpid (pid1, NULL, 0);
 	dup2 (out, STDOUT_FILENO);
-	dup2 (fd_pipe[0], STDIN_FILENO);
-	close (fd_pipe[1]);
-	path = path_to_exec(pathlist, cmd2[0]);
-	execve (path, cmd2, NULL);
+	cmd = ft_split(argv[i], ' ');
+	path = path_to_exec(pathlist, cmd[0]);
+	execve (path, cmd, NULL);
+	// close (fd_pipe[0]);
+	close (in);
+	close (out);
 	free (path);
 	path = NULL;
 }
@@ -96,24 +107,24 @@ int	main(int argc, char **argv, char **envp)
 	int		out;
 	int		in;
 
-	if (argc == 5)
+	if (argc >= 5)
 	{
 		in = open (argv[1], O_RDONLY);
-		out = open (argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		out = open (argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (in == -1 || out == -1)
 		{
 			ft_putstr_rtn_fd("Error: Can't open input and/or output files\n", 2);
 			return (1);
 		}
 		pathlist = getpathlist(envp, "PATH=");
-		pipex(in, out, argv, pathlist);
+		pipex(in, out, argv, pathlist, argc);
 		// Might need to free in pipex() call
 		free (pathlist);
 		pathlist = NULL;
 	}
 	else
 	{
-		ft_putstr_rtn_fd("Error: Not the right amount of arguments supplied\n", 2);
+		ft_putstr_rtn_fd("Error: Lower number of arguments than required\n", 2);
 		return (1);
 	}
 	return (0);
