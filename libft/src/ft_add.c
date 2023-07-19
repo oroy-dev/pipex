@@ -1,27 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_add.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/19 14:04:00 by oroy             ###   ########.fr       */
+/*   Created: 2023/04/24 16:58:52 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/13 15:34:17 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#include "../inc/libft.h"
 
-# include "../libft/inc/libft.h"
-# include <sys/wait.h>
-# include <stdio.h>
-# include <fcntl.h>
-
-void	*ft_null(void *rtn);
-void	close_(int fildes);
-void	dup2_(int fildes, int fildes2);
-pid_t	fork_(void);
-void	pipe_(int pipes[2]);
-
-#endif
+int	ft_add(int write_rtn, int nbr)
+{
+	if (write_rtn == -1)
+		return (-1);
+	else
+		return (write_rtn + nbr);
+}

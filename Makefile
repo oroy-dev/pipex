@@ -6,23 +6,23 @@
 #    By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/05 18:36:54 by oroy              #+#    #+#              #
-#    Updated: 2023/07/05 18:37:04 by oroy             ###   ########.fr        #
+#    Updated: 2023/07/18 13:32:50 by oroy             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # ********************************* VARIABLES ******************************** #
 
-NAME = push_swap
+NAME = pipex
 
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_SRC_DIR = $(LIBFT_DIR)/src
 LIBFT_SRC = $(wildcard $(LIBFT_SRC_DIR)/*.c)
 
-PS_SRC_DIR = src
-PS_OBJ_DIR = obj
-PS_SRC = $(wildcard $(PS_SRC_DIR)/*.c)
-PS_OBJ = $(patsubst $(PS_SRC_DIR)/%.c, $(PS_OBJ_DIR)/%.o, $(PS_SRC))
+SRC_DIR = src
+OBJ_DIR = obj
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
 AR = ar rcs
 CC = gcc
@@ -35,21 +35,21 @@ RM = rm -rf
 
 all: $(NAME)
 
-$(NAME): $(LIBFT) $(PS_OBJ_DIR) $(PS_OBJ)
-	$(CC) $(CFLAGS) $(LIBFT) $(PS_OBJ) -o $(NAME)
+$(NAME): $(LIBFT) $(OBJ_DIR) $(OBJ)
+	$(CC) $(CFLAGS) $(LIBFT) $(OBJ) -o $(NAME)
 
 $(LIBFT): $(LIBFT_SRC)
 	cd libft && $(MAKE)
 
-$(PS_OBJ_DIR):
+$(OBJ_DIR):
 	mkdir $@
 
-$(PS_OBJ_DIR)/%.o: $(PS_SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
 	cd libft && $(MAKE) clean
-	$(RM) $(PS_OBJ_DIR)
+	$(RM) $(OBJ_DIR)
 
 fclean: clean
 	$(RM) $(LIBFT) $(NAME)
@@ -58,7 +58,7 @@ re: fclean all
 
 # VALGRIND #
 
-PARAM = 64 39 82 100 68 23 36 86 59 65 50 72 62 81 6 49 19 9879872 -2147483648
+PARAM = infile \"cat\" \"grep Make\" \"wc -l\" outfile
 
 val: $(NAME)
 	valgrind --leak-check=full \

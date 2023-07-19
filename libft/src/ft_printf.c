@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 20:37:25 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/04 17:41:04 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/19 13:46:22 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ static int	write_arg(char c, void *arg, int fd)
 	else if (c == 's')
 	{
 		if (!arg)
-			return (ft_putstr_rtn_fd("(null)", fd));
-		nbr = ft_putstr_rtn_fd((char *)arg, fd);
+			return (ft_putstr_fd("(null)", fd));
+		nbr = ft_putstr_fd((char *)arg, fd);
 	}
 	else if (c == 'p')
 	{
-		nbr = ft_putstr_rtn_fd("0x", fd);
+		nbr = ft_putstr_fd("0x", fd);
 		if (nbr == -1)
 			return (-1);
 		nbr = ft_add(ft_puthex_rtn_fd((unsigned long)arg, c, fd), nbr);

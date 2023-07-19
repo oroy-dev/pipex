@@ -1,27 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_null.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/19 14:04:00 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/18 12:15:55 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/19 13:46:17 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#include "../inc/pipex.h"
 
-# include "../libft/inc/libft.h"
-# include <sys/wait.h>
-# include <stdio.h>
-# include <fcntl.h>
-
-void	*ft_null(void *rtn);
-void	close_(int fildes);
-void	dup2_(int fildes, int fildes2);
-pid_t	fork_(void);
-void	pipe_(int pipes[2]);
-
-#endif
+void	*ft_null(void *rtn)
+{
+	if (!rtn)
+	{
+		ft_putstr_fd("Error: NULL returned", 2);
+		exit (EXIT_FAILURE);
+	}
+	else
+		return (rtn);
+}

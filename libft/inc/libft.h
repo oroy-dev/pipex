@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:32:25 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/12 12:33:15 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/19 13:44:39 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,7 @@ void	ft_putendl_fd(char *s, int fd);
 int		ft_puthex_rtn_fd(unsigned long n, char c, int fd);
 void	ft_putnbr_fd(int n, int fd);
 int		ft_putnbr_rtn_fd(long n, int fd);
-void	ft_putstr_fd(char *s, int fd);
-int		ft_putstr_rtn_fd(char *s, int fd);
+int		ft_putstr_fd(char *s, int fd);
 char	**ft_split(char const *s, char c);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s1);
