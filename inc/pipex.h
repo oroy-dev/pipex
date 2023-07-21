@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/19 14:04:00 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/20 21:04:32 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,13 @@
 # include <stdio.h>
 # include <fcntl.h>
 
-void	*ft_null(void *rtn);
 void	close_(int fildes);
 void	dup2_(int fildes, int fildes2);
+void	execve_(const char *path, char *const argv[], char *const envp[]);
+void	ft_free(void *ptr);
 pid_t	fork_(void);
-void	pipe_(int pipes[2]);
+void	null_check(void *nul);
+void	pipe_(int fildes[2]);
+void	waitpid_(pid_t pid, int *status, int options);
 
 #endif

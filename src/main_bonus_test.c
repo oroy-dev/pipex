@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/19 14:10:54 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/20 21:08:59 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ static char	*path_to_exec(char **pathlist, char *cmd)
 	i = 0;
 	while (pathlist[i])
 	{
-		path = ft_strjoin(pathlist[i], "/");
-		path = ft_strjoin(path, cmd);
+		path = ft_strjoin(pathlist[i], cmd);
+		null_check(path);
 		if (access (path, X_OK) == 0)
 			return (path);
-		free (path);
+		ft_free(path);
 		i++;
 	}
 	return (NULL);
@@ -34,19 +34,28 @@ static void	exec_cmd(int in, int out, char *arg, char **pathlist)
 {
 	char	**cmd;
 	char	*path;
+	size_t	i;
 
+	i = 0;
 	dup2_(out, STDOUT_FILENO);
 	close_(in);
 	cmd = ft_split(arg, ' ');
-	path = path_to_exec(pathlist, cmd[0]);
+	null_check(cmd);
+	path = ft_strjoin("/", cmd[0]);
+	null_check(path);
+	path = path_to_exec(pathlist, path);
 	if (!path)
 	{
 		ft_putstr_fd("Error: Shell Command Not Executable", 2);
 		exit (EXIT_FAILURE);
 	}
-	execve (path, cmd, NULL);
-	free (path);
-	path = NULL;
+	execve_(path, cmd, NULL);
+	while (cmd[i])
+	{
+		ft_free(cmd[i]);
+		i++;
+	}
+	ft_free(path);
 	close_(out);
 }
 
@@ -54,6 +63,7 @@ static void	pipex(int files[2], char **argv, char **pathlist, int count)
 {
 	int		pipes[2];
 	pid_t	process;
+	int		status;
 	int		i;
 
 	i = 0;
@@ -67,16 +77,17 @@ static void	pipex(int files[2], char **argv, char **pathlist, int count)
 			exec_cmd(pipes[0], pipes[1], argv[i + 2], pathlist);
 			exit (EXIT_SUCCESS);
 		}
-		waitpid (process, NULL, 0);
+		waitpid_(process, &status, 0);
 		dup2_(pipes[0], files[0]);
 		close_(pipes[1]);
 		i++;
 	}
 	dup2_(pipes[0], STDIN_FILENO);
 	exec_cmd(files[0], files[1], argv[i + 2], pathlist);
+	ft_free(pathlist);
 }
 
-static char	**getpathlist(char **envp, char *path)
+static char	**getpathlist(char **envp, char *path, int files[2])
 {
 	char	**pathlist;
 	char	*pathstr;
@@ -90,14 +101,17 @@ static char	**getpathlist(char **envp, char *path)
 		{
 			len = ft_strlen(envp[i]);
 			pathstr = ft_substr(envp[i], 5, len);
+			null_check(pathstr);
 			pathlist = ft_split(pathstr, ':');
-			free (pathstr);
-			pathstr = NULL;
+			ft_free(pathstr);
+			null_check(pathlist);
 			return (pathlist);
 		}
 		i++;
 	}
 	ft_putstr_fd("Error: Can't find path list\n", 2);
+	close_(files[0]);
+	close_(files[1]);
 	exit (EXIT_FAILURE);
 }
 
@@ -106,25 +120,25 @@ int	main(int argc, char **argv, char **envp)
 	char	**pathlist;
 	int		files[2];
 
-	if (argc >= 5)
-	{
-		files[0] = open (argv[1], O_RDONLY);
-		files[1] = open (argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (files[0] == -1 || files[1] == -1)
-		{
-			ft_putstr_fd("Error: Can't open input and/or output files\n", 2);
-			return (1);
-		}
-		pathlist = getpathlist(envp, "PATH=");
-		pipex(files, argv, pathlist, argc - 4);
-		// Might need to free in pipex() call
-		free (pathlist);
-		pathlist = NULL;
-	}
-	else
+	if (argc < 5)
 	{
 		ft_putstr_fd("Error: Lower number of arguments than required\n", 2);
-		return (1);
+		exit (EXIT_FAILURE);
 	}
+	files[0] = open (argv[1], O_RDONLY);
+	if (files[0] == -1)
+	{
+		perror ("Can't open infile");
+		exit (EXIT_FAILURE);
+	}
+	files[1] = open (argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (files[1] == -1)
+	{
+		perror ("Can't open/create outfile");
+		close_(files[0]);
+		exit (EXIT_FAILURE);
+	}
+	pathlist = getpathlist(envp, "PATH=", files);
+	pipex(files, argv, pathlist, argc - 4);
 	return (0);
 }
