@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/20 21:04:32 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/21 19:51:22 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,14 @@
 # include <stdio.h>
 # include <fcntl.h>
 
+typedef struct s_fildes
+{
+	int	files[2];
+	int	pipes[2];
+}	t_fildes;
+
 void	close_(int fildes);
+void	close_fds(int num_args, ...);
 void	dup2_(int fildes, int fildes2);
 void	execve_(const char *path, char *const argv[], char *const envp[]);
 void	ft_free(void *ptr);
