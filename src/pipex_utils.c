@@ -6,22 +6,23 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 13:05:32 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/21 19:43:28 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/22 18:26:58 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	pipe_(int fildes[2])
+void	pipe_(int fds[2][2])
 {
-	if (pipe (fildes) == -1)
+	if (pipe (fds[1]) == -1)
 	{
 		perror("Problem with pipe() call");
+		close_all_fds(fds);
 		exit (EXIT_FAILURE);
 	}
 }
 
-pid_t	fork_(void)
+pid_t	fork_(int fds[2][2])
 {
 	pid_t	process;
 
@@ -29,16 +30,18 @@ pid_t	fork_(void)
 	if (process == -1)
 	{
 		perror ("Problem with fork() call");
+		close_all_fds(fds);
 		exit (EXIT_FAILURE);
 	}
 	return (process);
 }
 
-void	dup2_(int fildes, int fildes2)
+void	dup2_(int fildes, int fildes2, int fds[2][2])
 {
 	if (dup2 (fildes, fildes2) == -1)
 	{
 		perror ("Problem with dup2() call");
+		close_all_fds(fds);
 		exit (EXIT_FAILURE);
 	}
 }
@@ -52,11 +55,12 @@ void	close_(int fildes)
 	}
 }
 
-void	execve_(const char *path, char *const argv[], char *const envp[])
+void	execve_(char *path, char **cmd, char **envp, int fds[2][2])
 {
-	if (execve (path, argv, envp) == -1)
+	if (execve (path, cmd, envp) == -1)
 	{
 		perror ("Problem with execve() call");
+		close_all_fds(fds);
 		exit (EXIT_FAILURE);
 	}
 }

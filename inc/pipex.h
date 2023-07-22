@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/21 19:51:22 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/22 18:16:12 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,14 @@
 # include <stdio.h>
 # include <fcntl.h>
 
-typedef struct s_fildes
-{
-	int	files[2];
-	int	pipes[2];
-}	t_fildes;
-
 void	close_(int fildes);
-void	close_fds(int num_args, ...);
-void	dup2_(int fildes, int fildes2);
+void	close_all_fds(int fds[2][2]);
+void	dup2_(int fildes, int fildes2, int fds[2][2]);
 void	execve_(const char *path, char *const argv[], char *const envp[]);
 void	ft_free(void *ptr);
-pid_t	fork_(void);
-void	null_check(void *nul);
-void	pipe_(int fildes[2]);
+pid_t	fork_(int fds[2][2]);
+void	malloc_check(void *maloc, int fds[2][2]);
+void	pipe_(int fds[2][2]);
 void	waitpid_(pid_t pid, int *status, int options);
 
 #endif

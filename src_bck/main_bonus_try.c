@@ -6,13 +6,13 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/22 18:54:47 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/22 16:04:28 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-static char	*path_to_exec(char **pathlist, char *cmd, int fds[2][2])
+static char	*path_to_exec(char **pathlist, char *cmd)
 {
 	char	*path;
 	int		i;
@@ -21,7 +21,7 @@ static char	*path_to_exec(char **pathlist, char *cmd, int fds[2][2])
 	while (pathlist[i])
 	{
 		path = ft_strjoin(pathlist[i], cmd);
-		malloc_check(path, fds);
+		null_check(path);
 		if (access (path, X_OK) == 0)
 			return (path);
 		ft_free(path);
@@ -30,38 +30,38 @@ static char	*path_to_exec(char **pathlist, char *cmd, int fds[2][2])
 	return (NULL);
 }
 
-static void	exec_cmd(int fildes[2], char *arg, char **pathlist, int fds[2][2])
+static void	exec_cmd(int in, int out, char *arg, char **pathlist)
 {
 	char	**cmd;
 	char	*path;
 	size_t	i;
 
 	i = 0;
-	dup2_(fildes[1], STDOUT_FILENO, fds);
-	close_(fildes[0]);
+	dup2_(out, STDOUT_FILENO);
+	close_(in);
 	cmd = ft_split(arg, ' ');
-	malloc_check(cmd, fds);
+	null_check(cmd);
 	path = ft_strjoin("/", cmd[0]);
-	malloc_check(path, fds);
-	path = path_to_exec(pathlist, path, fds);
+	null_check(path);
+	path = path_to_exec(pathlist, path);
 	if (!path)
 	{
 		ft_putstr_fd("Error: Shell Command Not Executable", 2);
-		close_all_fds(fds);
 		exit (EXIT_FAILURE);
 	}
-	execve_(path, cmd, NULL, fds);
+	execve_(path, cmd, NULL);
 	while (cmd[i])
 	{
 		ft_free(cmd[i]);
 		i++;
 	}
 	ft_free(path);
-	close_(fildes[1]);
+	close_(out);
 }
 
-static void	pipex(int fds[2][2], char **argv, char **pathlist, int count)
+static void	pipex(int files[2], char **argv, char **pathlist, int count)
 {
+	int		pipes[2];
 	pid_t	process;
 	int		status;
 	int		i;
@@ -69,26 +69,28 @@ static void	pipex(int fds[2][2], char **argv, char **pathlist, int count)
 	i = 0;
 	while (i < count)
 	{
-		pipe_(fds);
+		pipe_(pipes);
 		if (i)
-			close_(fds[1][1] - fds[1][0] + 4);
-		process = fork_(fds);
+			close_(pipes[1] - pipes[0] + 4);
+		process = fork_();
 		if (process == 0)
 		{
-			dup2_(fds[0][0], STDIN_FILENO, fds);
-			exec_cmd(fds[1], argv[i + 2], pathlist, fds);
-			exit (EXIT_FAILURE);
+			dup2_(files[0], STDIN_FILENO);
+			exec_cmd(pipes[0], pipes[1], argv[i + 2], pathlist);
+			close_fds(2, files, pipes);
+			exit (EXIT_SUCCESS);
 		}
 		waitpid_(process, &status, 0);
-		dup2_(fds[1][0], fds[0][0], fds);
-		close_(fds[1][1]);
+		dup2_(pipes[0], files[0]);
+		close_(pipes[1]);
 		i++;
 	}
-	dup2_(fds[1][0], STDIN_FILENO, fds);
-	exec_cmd(fds[0], argv[i + 2], pathlist, fds);
+	dup2_(pipes[0], STDIN_FILENO);
+	exec_cmd(files[0], files[1], argv[i + 2], pathlist);
+	ft_free(pathlist);
 }
 
-static char	**getpathlist(char **envp, char *path, int fds[2][2])
+static char	**getpathlist(char **envp, char *path, int files[2])
 {
 	char	**pathlist;
 	char	*pathstr;
@@ -102,20 +104,20 @@ static char	**getpathlist(char **envp, char *path, int fds[2][2])
 		{
 			len = ft_strlen(envp[i]);
 			pathstr = ft_substr(envp[i], 5, len);
-			malloc_check(pathstr, fds);
+			null_check(pathstr);
 			pathlist = ft_split(pathstr, ':');
 			ft_free(pathstr);
-			malloc_check(pathlist, fds);
+			null_check(pathlist);
 			return (pathlist);
 		}
 		i++;
 	}
 	ft_putstr_fd("Error: Can't find path list\n", 2);
-	close_all_fds(fds);
+	close_fds(1, files);
 	exit (EXIT_FAILURE);
 }
 
-static void	open_files(int argc, char **argv, int files[2])
+void	open_files(int argc, char **argv, int files[2])
 {
 	files[0] = open (argv[1], O_RDONLY);
 	if (files[0] == -1)
@@ -134,17 +136,20 @@ static void	open_files(int argc, char **argv, int files[2])
 
 int	main(int argc, char **argv, char **envp)
 {
-	int		fds[2][2];
 	char	**pathlist;
+	int		fildes[2][2];
+	// t_fildes	*fds;
 
 	if (argc < 5)
 	{
 		ft_putstr_fd("Error: Lower number of arguments than required\n", 2);
 		exit (EXIT_FAILURE);
 	}
-	open_files(argc, argv, fds[0]);
-	pathlist = getpathlist(envp, "PATH=", fds);
-	pipex(fds, argv, pathlist, argc - 4);
-	ft_free(pathlist);
+	// fds = ft_calloc(1, sizeof (t_fildes));
+	// null_check(fds);
+	open_files(argc, argv, fds->files);
+	pathlist = getpathlist(envp, "PATH=", fds->files);
+	pipex(fds->files, argv, pathlist, argc - 4);
+	// ft_free(fds);
 	return (0);
 }
