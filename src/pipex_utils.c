@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 13:05:32 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/22 18:26:58 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/24 14:08:50 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	waitpid_(pid_t pid, int *status, int options)
 	}
 	else if (WIFEXITED (*status) && WEXITSTATUS (*status) != 0)
 	{
-		ft_putstr_fd("Child process did not exit correctly\n", 2);
+		ft_putendl_fd("Child process did not exit correctly", 2);
 		exit (EXIT_FAILURE);
 	}
 }
