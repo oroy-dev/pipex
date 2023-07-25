@@ -1,23 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc_check.c                                     :+:      :+:    :+:   */
+/*   close_all.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/20 15:49:02 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/25 13:44:26 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/25 11:36:35 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	malloc_check(void *maloc)
+void	close_all(int fds[2][2])
 {
-	if (!maloc)
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < 2)
 	{
-		ft_putendl_fd("Malloc Error", 2);
-		// close_all(fds);
-		exit (EXIT_FAILURE);
+		j = 0;
+		while (j < 2)
+		{
+			if (fds[i][j])
+				close_(fds[i][j]);
+			j++;
+		}
+		i++;
 	}
 }

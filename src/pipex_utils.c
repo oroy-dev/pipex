@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 13:05:32 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/24 14:08:50 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/25 11:37:02 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	pipe_(int fds[2][2])
 	if (pipe (fds[1]) == -1)
 	{
 		perror("Problem with pipe() call");
-		close_all_fds(fds);
+		close_all(fds);
 		exit (EXIT_FAILURE);
 	}
 }
@@ -30,7 +30,7 @@ pid_t	fork_(int fds[2][2])
 	if (process == -1)
 	{
 		perror ("Problem with fork() call");
-		close_all_fds(fds);
+		close_all(fds);
 		exit (EXIT_FAILURE);
 	}
 	return (process);
@@ -41,7 +41,7 @@ void	dup2_(int fildes, int fildes2, int fds[2][2])
 	if (dup2 (fildes, fildes2) == -1)
 	{
 		perror ("Problem with dup2() call");
-		close_all_fds(fds);
+		close_all(fds);
 		exit (EXIT_FAILURE);
 	}
 }
@@ -60,7 +60,7 @@ void	execve_(char *path, char **cmd, char **envp, int fds[2][2])
 	if (execve (path, cmd, envp) == -1)
 	{
 		perror ("Problem with execve() call");
-		close_all_fds(fds);
+		close_all(fds);
 		exit (EXIT_FAILURE);
 	}
 }

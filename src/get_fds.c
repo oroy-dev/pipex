@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc_check.c                                     :+:      :+:    :+:   */
+/*   get_fds.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/20 15:49:02 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/25 13:44:26 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/25 13:20:40 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/25 13:38:19 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	malloc_check(void *maloc)
+t_fds	*get_fds(void)
 {
-	if (!maloc)
+	static t_fds	*fds;
+
+	if (!fds)
 	{
-		ft_putendl_fd("Malloc Error", 2);
-		// close_all(fds);
-		exit (EXIT_FAILURE);
+		fds = ft_calloc(1, sizeof (t_fds));
+		malloc_check(fds);
 	}
+	return (fds);
 }

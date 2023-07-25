@@ -6,13 +6,13 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/24 17:44:58 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/25 14:06:14 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-static char	*path_to_exec(char **pathlist, char *cmd, int fds[2][2])
+static char	*path_to_exec(char **pathlist, char *cmd)
 {
 	char	*path;
 	int		i;
@@ -21,7 +21,7 @@ static char	*path_to_exec(char **pathlist, char *cmd, int fds[2][2])
 	while (pathlist[i])
 	{
 		path = ft_strjoin(pathlist[i], cmd);
-		malloc_check(path, fds);
+		malloc_check(path);
 		if (access (path, X_OK) == 0)
 			return (path);
 		free (path);
@@ -30,70 +30,80 @@ static char	*path_to_exec(char **pathlist, char *cmd, int fds[2][2])
 	return (NULL);
 }
 
-static void	exec_cmd(int fildes[2], char *path, char **cmd, int fds[2][2])
+static void	child_process(int count, char *path, char **cmd)
 {
-	dup2_(fildes[1], STDOUT_FILENO, fds);
-	close_(fildes[1]);
-	close_(fildes[0]);
-	execve_(path, cmd, NULL, fds);
-}
+	t_fds	*fds;
 
-static void	child_process(int count, char *path, char **cmd, int fds[2][2])
-{
-	dup2_(fds[0][0], STDIN_FILENO, fds);
+	fds = get_fds();
+	dup2_(fds->files[0], STDIN_FILENO);
 	if (count > 1)
 	{
-		close_(fds[0][1]);
-		close_(fds[0][0]);
-		exec_cmd(fds[1], path, cmd, fds);
+		dup2_(fds->pipes[1], STDOUT_FILENO);
+		close_all();
+		execve_(path, cmd, NULL);
 	}
 	else
-		exec_cmd(fds[0], path, cmd, fds);
+	{
+		dup2_(fds->files[1], STDOUT_FILENO);
+		close_(fds->files[0]);
+		close_(fds->files[1]);
+		execve_(path, cmd, NULL);
+	}
 	exit (EXIT_FAILURE);
 }
 
-static void	pipex(int fds[2][2], char **argv, char **pathlist, int count)
+static char	**get_exec_info(char *arg, char **pathlist, char **path)
+{
+	char	**cmd;
+	
+	cmd = ft_split(arg, ' ');
+	malloc_check(cmd);
+	*path = ft_strjoin("/", cmd[0]);
+	malloc_check(*path);
+	*path = path_to_exec(pathlist, *path);
+	if (!*path)
+	{
+		ft_putendl_fd("Error: Shell Command Not Executable", 2);
+		close_all();
+		exit (EXIT_FAILURE);
+	}
+	printf ("%s\n", *path);
+	return (cmd);
+}
+
+static void	pipex(int count, char **argv, char **pathlist)
 {
 	char	**cmd;
 	char	*path;
+	t_fds	*fds;
 	pid_t	process;
 	int		status;
 	int		i;
 
 	i = 0;
+	fds = get_fds();
 	while (i < count)
 	{
+		cmd = get_exec_info(argv[i + 2], pathlist, &path);
 		if (i < count - 1)
-			pipe_(fds);
-		// get_exec_info(argv[i + 2], path, cmd, fds);
-		cmd = ft_split(argv[i + 2], ' ');
-		malloc_check(cmd, fds);
-		path = ft_strjoin("/", cmd[0]);
-		malloc_check(path, fds);
-		path = path_to_exec(pathlist, path, fds);
-		if (!path)
-		{
-			ft_putendl_fd("Error: Shell Command Not Executable", 2);
-			close_all_fds(fds);
-			exit (EXIT_FAILURE);
-		}
-		process = fork_(fds);
-		child_process(count - i, path, cmd, fds);
+			pipe_();
+		process = fork_();
+		if (process == 0)
+			child_process(count - i, path, cmd);
 		waitpid_(process, &status, 0);
 		if (i < count - 1)
 		{
-			dup2_(fds[1][0], fds[0][0], fds);
-			close_(fds[1][0]);
-			close_(fds[1][1]);
+			dup2_(fds->pipes[0], fds->files[0]);
+			close_all(fds->pipes);
 		}
 		ft_free_tab((void **)cmd);
 		ft_free(path);
 		i++;
 	}
-	close_all_fds(fds);
+	close_all(fds->files);
 }
 
-static char	**getpathlist(char **envp, char *path, int fds[2][2])
+static char	**getpathlist(char **envp, char *path)
 {
 	char	**pathlist;
 	char	*pathstr;
@@ -107,10 +117,10 @@ static char	**getpathlist(char **envp, char *path, int fds[2][2])
 		{
 			len = ft_strlen(envp[i]);
 			pathstr = ft_substr(envp[i], 5, len);
-			malloc_check(pathstr, fds);
+			// malloc_check(pathstr);
 			pathlist = ft_split(pathstr, ':');
 			ft_free (pathstr);
-			malloc_check(pathlist, fds);
+			// malloc_check(pathlist);
 			return (pathlist);
 		}
 		i++;
@@ -118,26 +128,28 @@ static char	**getpathlist(char **envp, char *path, int fds[2][2])
 	return (NULL);
 }
 
-static void	open_files(int argc, char **argv, int files[2])
+static void	open_files(int argc, char **argv)
 {
-	files[0] = open (argv[1], O_RDONLY);
-	if (files[0] == -1)
+	t_fds	*fds;
+
+	fds = get_fds();
+	fds->files[0] = open (argv[1], O_RDONLY);
+	if (fds->files[0] == -1)
 	{
 		perror ("Can't open infile");
 		exit (EXIT_FAILURE);
 	}
-	files[1] = open (argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (files[1] == -1)
+	fds->files[1] = open (argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fds->files[1] == -1)
 	{
 		perror ("Can't open/create outfile");
-		close_(files[0]);
+		close_(fds->files[0]);
 		exit (EXIT_FAILURE);
 	}
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	int		fds[2][2];
 	char	**pathlist;
 
 	if (argc < 5)
@@ -145,15 +157,15 @@ int	main(int argc, char **argv, char **envp)
 		ft_putendl_fd("Error: Lower number of arguments than required", 2);
 		exit (EXIT_FAILURE);
 	}
-	open_files(argc, argv, fds[0]);
-	pathlist = getpathlist(envp, "PATH=", fds);
+	open_files(argc, argv);
+	pathlist = getpathlist(envp, "PATH=");
 	if (!pathlist)
 	{
 		ft_putendl_fd("Error: Can't find path list", 2);
-		close_all_fds(fds);
+		// close_all(fds);
 		exit (EXIT_FAILURE);
 	}
-	pipex(fds, argv, pathlist, argc - 3);
+	pipex(argc - 3, argv, pathlist);
 	ft_free_tab((void **)pathlist);
 	return (0);
 }
