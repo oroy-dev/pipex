@@ -1,43 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   close_all.c                                        :+:      :+:    :+:   */
+/*   open_files.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/27 12:04:05 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/27 11:42:54 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/27 12:59:17 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	close_(int fildes)
-{
-	if (close (fildes) == -1)
-	{
-		perror ("Problem with close() call");
-		exit (EXIT_FAILURE);
-	}
-}
-
-void	close_all(void)
+void	open_files(int argc, char **argv)
 {
 	t_data	*pipex;
-	int		i;
-	int		j;
 
-	i = 0;
-	j = 0;
 	pipex = get_data();
-	while (pipex->files && pipex->files[i] > 0)
+	pipex->files = ft_calloc(2, sizeof (int));
+	malloc_check(pipex->files);
+	pipex->files[0] = open (argv[1], O_RDONLY);
+	if (pipex->files[0] == -1)
 	{
-		close_(pipex->files[i]);
-		i++;
+		perror ("Can't open infile");
+		free_data();
+		exit (EXIT_FAILURE);
 	}
-	while (pipex->pipes && pipex->pipes[j] > 0)
+	pipex->files[1] = open (argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (pipex->files[1] == -1)
 	{
-		close_(pipex->pipes[j]);
-		j++;
+		perror ("Can't open/create outfile");
+		close_(pipex->files[0]);
+		free_data();
+		exit (EXIT_FAILURE);
 	}
 }

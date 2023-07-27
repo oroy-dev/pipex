@@ -1,43 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   close_all.c                                        :+:      :+:    :+:   */
+/*   get_data.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/27 12:04:05 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/25 13:20:40 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/26 12:12:35 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	close_(int fildes)
+t_data	*get_data(void)
 {
-	if (close (fildes) == -1)
-	{
-		perror ("Problem with close() call");
-		exit (EXIT_FAILURE);
-	}
-}
+	static t_data	*pipex;
 
-void	close_all(void)
-{
-	t_data	*pipex;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	pipex = get_data();
-	while (pipex->files && pipex->files[i] > 0)
+	if (!pipex)
 	{
-		close_(pipex->files[i]);
-		i++;
+		pipex = ft_calloc(1, sizeof (t_data));
+		malloc_check(pipex);
+		pipex->cmd = NULL;
+		pipex->cmdpath = NULL;
+		pipex->files = NULL;
+		pipex->pathlist = NULL;
+		pipex->pipes = NULL;
 	}
-	while (pipex->pipes && pipex->pipes[j] > 0)
-	{
-		close_(pipex->pipes[j]);
-		j++;
-	}
+	return (pipex);
 }

@@ -1,43 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   close_all.c                                        :+:      :+:    :+:   */
+/*   get_pathlist.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/27 12:04:05 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/27 11:43:42 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/27 16:14:41 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	close_(int fildes)
-{
-	if (close (fildes) == -1)
-	{
-		perror ("Problem with close() call");
-		exit (EXIT_FAILURE);
-	}
-}
-
-void	close_all(void)
+void	get_pathlist(char **envp, char *path)
 {
 	t_data	*pipex;
-	int		i;
-	int		j;
+	char	*pathstr;
+	size_t	len;
+	size_t	i;
 
 	i = 0;
-	j = 0;
 	pipex = get_data();
-	while (pipex->files && pipex->files[i] > 0)
+	while (envp[i])
 	{
-		close_(pipex->files[i]);
+		if (ft_strnstr(envp[i], path, 5))
+		{
+			len = ft_strlen(envp[i]);
+			pathstr = ft_substr(envp[i], 5, len);
+			malloc_check(pathstr);
+			pipex->pathlist = ft_split(pathstr, ':');
+			ft_free(pathstr);
+			malloc_check(pipex->pathlist);
+			return ;
+		}
 		i++;
 	}
-	while (pipex->pipes && pipex->pipes[j] > 0)
-	{
-		close_(pipex->pipes[j]);
-		j++;
-	}
+	ft_putendl_fd("Error: Can't find PATH environment variable", 2);
+	close_all();
+	free_data();
+	exit (EXIT_FAILURE);
 }

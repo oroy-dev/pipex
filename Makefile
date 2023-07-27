@@ -6,7 +6,7 @@
 #    By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/05 18:36:54 by oroy              #+#    #+#              #
-#    Updated: 2023/07/18 13:32:50 by oroy             ###   ########.fr        #
+#    Updated: 2023/07/27 15:37:28 by oroy             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,17 +65,3 @@ val: $(NAME)
 	--show-leak-kinds=all \
 	--track-origins=yes \
 	./$(NAME) $(PARAM)
-
-# VISUALIZER #
-
-visual: all
-	./push_swap_visualizer/build/bin/visualizer
-
-visinstall:
-	git clone https://github.com/o-reo/push_swap_visualizer.git && \
-	cd push_swap_visualizer && \
-	mkdir build && \
-	cd build && \
-	cmake .. && \
-	make && \
-	cd ../..

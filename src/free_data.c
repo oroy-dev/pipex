@@ -1,43 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   close_all.c                                        :+:      :+:    :+:   */
+/*   free_data.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/27 12:04:05 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/26 10:12:08 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/27 15:35:07 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	close_(int fildes)
+void	ft_free(void *ptr)
 {
-	if (close (fildes) == -1)
+	if (ptr)
 	{
-		perror ("Problem with close() call");
-		exit (EXIT_FAILURE);
+		free (ptr);
+		ptr = NULL;
 	}
 }
 
-void	close_all(void)
+void	ft_free_tab(char **tab)
 {
-	t_data	*pipex;
-	int		i;
-	int		j;
+	size_t	i;
 
 	i = 0;
-	j = 0;
+	if (tab)
+	{
+		while (tab[i])
+		{
+			free (tab[i]);
+			i++;
+		}
+		tab = NULL;
+	}
+}
+
+void	free_data(void)
+{
+	t_data	*pipex;
+
 	pipex = get_data();
-	while (pipex->files && pipex->files[i] > 0)
-	{
-		close_(pipex->files[i]);
-		i++;
-	}
-	while (pipex->pipes && pipex->pipes[j] > 0)
-	{
-		close_(pipex->pipes[j]);
-		j++;
-	}
+	ft_free_tab(pipex->cmd);
+	ft_free(pipex->cmdpath);
+	ft_free(pipex->files);
+	ft_free_tab(pipex->pathlist);
+	ft_free(pipex->pipes);
+	ft_free(pipex);
 }
