@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 13:05:32 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/27 11:32:29 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/31 19:43:18 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	pipe_(int fildes[2])
 	if (pipe (fildes) == -1)
 	{
 		perror("Problem with pipe() call");
-		close_all();
+		close_files();
 		free_data();
 		exit (EXIT_FAILURE);
 	}
@@ -54,7 +54,6 @@ void	execve_(char *path, char **cmd, char **envp)
 	if (execve (path, cmd, envp) == -1)
 	{
 		perror ("Problem with execve() call");
-		close_all();
 		free_data();
 		exit (EXIT_FAILURE);
 	}
@@ -69,11 +68,11 @@ void	waitpid_(pid_t pid, int *status, int options)
 		free_data();
 		exit (EXIT_FAILURE);
 	}
-	else if (WIFEXITED (*status) && WEXITSTATUS (*status) != 0)
-	{
-		ft_putendl_fd("Child process did not exit correctly", 2);
-		close_all();
-		free_data();
-		exit (EXIT_FAILURE);
-	}
+	// else if (WIFEXITED (*status) && WEXITSTATUS (*status) != 0)
+	// {
+	// 	ft_putendl_fd("Child process did not exit correctly", 2);
+	// 	close_all();
+	// 	free_data();
+	// 	exit (EXIT_FAILURE);
+	// }
 }

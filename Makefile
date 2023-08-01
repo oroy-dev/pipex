@@ -6,7 +6,7 @@
 #    By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/05 18:36:54 by oroy              #+#    #+#              #
-#    Updated: 2023/07/27 15:37:28 by oroy             ###   ########.fr        #
+#    Updated: 2023/08/01 14:05:46 by oroy             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,7 +58,7 @@ re: fclean all
 
 # VALGRIND #
 
-PARAM = infile \"cat\" \"grep Make\" \"wc -l\" outfile
+PARAM = infile cat "grep Make" "wc -c" outfile
 
 val: $(NAME)
 	valgrind --leak-check=full \

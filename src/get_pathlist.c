@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 11:43:42 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/27 16:14:41 by oroy             ###   ########.fr       */
+/*   Updated: 2023/08/01 12:51:51 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void	get_pathlist(char **envp, char *path)
 		}
 		i++;
 	}
-	ft_putendl_fd("Error: Can't find PATH environment variable", 2);
-	close_all();
-	free_data();
-	exit (EXIT_FAILURE);
+	// ft_putendl_fd("Error: Can't find PATH environment variable", 2);
+	// close_files();
+	// free_data();
+	// exit (EXIT_FAILURE);
 }
