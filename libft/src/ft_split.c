@@ -6,13 +6,13 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 16:25:57 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/12 12:35:34 by oroy             ###   ########.fr       */
+/*   Updated: 2023/07/31 13:42:36 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/libft.h"
 
-static char	**ft_free(char **tab)
+static char	**free_mem(char **tab)
 {
 	size_t	i;
 
@@ -52,7 +52,7 @@ static char	**filltable(char **tab, char const *s, char c)
 			count = countchars(s, c);
 			tab[i] = ft_calloc(count + 1, sizeof(char));
 			if (!tab[i])
-				return (ft_free(tab));
+				return (free_mem(tab));
 			while (count--)
 				tab[i][j++] = *(char *)s++;
 			tab[i++][j] = '\0';

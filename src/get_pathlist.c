@@ -1,34 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   get_pathlist.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:46:40 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/27 11:43:42 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 15:05:24 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/libft.h"
+#include "../inc/pipex.h"
 
-void	*ft_calloc(size_t count, size_t size)
+void	get_pathlist(char **envp, char *path)
 {
-	void	*mem;
-	size_t	total;
+	t_data	*pipex;
+	char	*pathstr;
+	size_t	len;
 	size_t	i;
 
-	if (count >= SIZE_MAX || size >= SIZE_MAX)
-		return (NULL);
 	i = 0;
-	total = count * size;
-	mem = malloc(total);
-	if (!mem)
-		return (NULL);
-	while (i < total)
+	pipex = get_data();
+	while (envp[i])
 	{
-		*((unsigned char *)mem + i) = '\0';
+		if (ft_strnstr(envp[i], path, 5))
+		{
+			len = ft_strlen(envp[i]);
+			pathstr = ft_substr(envp[i], 5, len);
+			malloc_check(pathstr);
+			pipex->pathlist = ft_split(pathstr, ':');
+			ft_free(pathstr);
+			malloc_check(pipex->pathlist);
+			return ;
+		}
 		i++;
 	}
-	return (mem);
 }

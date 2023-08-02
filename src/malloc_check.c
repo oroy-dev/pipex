@@ -1,34 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   malloc_check.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:46:40 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/20 15:49:02 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 15:36:41 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/libft.h"
+#include "../inc/pipex.h"
 
-void	*ft_calloc(size_t count, size_t size)
+void	malloc_check(void *maloc)
 {
-	void	*mem;
-	size_t	total;
-	size_t	i;
-
-	if (count >= SIZE_MAX || size >= SIZE_MAX)
-		return (NULL);
-	i = 0;
-	total = count * size;
-	mem = malloc(total);
-	if (!mem)
-		return (NULL);
-	while (i < total)
+	if (!maloc)
 	{
-		*((unsigned char *)mem + i) = '\0';
-		i++;
+		ft_putendl_fd("Malloc Error", 2);
+		close_all();
+		free_data();
+		exit (EXIT_FAILURE);
 	}
-	return (mem);
 }

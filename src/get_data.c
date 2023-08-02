@@ -1,34 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   get_data.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:46:40 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/25 13:20:40 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 14:47:39 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/libft.h"
+#include "../inc/pipex.h"
 
-void	*ft_calloc(size_t count, size_t size)
+t_data	*get_data(void)
 {
-	void	*mem;
-	size_t	total;
-	size_t	i;
+	static t_data	*pipex;
 
-	if (count >= SIZE_MAX || size >= SIZE_MAX)
-		return (NULL);
-	i = 0;
-	total = count * size;
-	mem = malloc(total);
-	if (!mem)
-		return (NULL);
-	while (i < total)
+	if (!pipex)
 	{
-		*((unsigned char *)mem + i) = '\0';
-		i++;
+		pipex = ft_calloc(1, sizeof (t_data));
+		malloc_check(pipex);
+		pipex->cmd = NULL;
+		pipex->cmdpath = NULL;
+		pipex->pathlist = NULL;
 	}
-	return (mem);
+	return (pipex);
 }

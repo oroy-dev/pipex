@@ -1,7 +1,8 @@
 Makefile
-a.out
 inc
-infile.txt
+infile
 libft
-outfile.txt
+obj
+pipex
 src
+src_bck

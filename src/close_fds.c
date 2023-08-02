@@ -1,34 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   close_fds.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:46:40 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 15:42:34 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/libft.h"
+#include "../inc/pipex.h"
 
-void	*ft_calloc(size_t count, size_t size)
+void	close_(int fildes)
 {
-	void	*mem;
-	size_t	total;
-	size_t	i;
+	if (close (fildes) == -1)
+		perror ("Problem with close() call");
+}
 
-	if (count >= SIZE_MAX || size >= SIZE_MAX)
-		return (NULL);
+void	close_fds(int fildes[2])
+{
+	int	i;
+
 	i = 0;
-	total = count * size;
-	mem = malloc(total);
-	if (!mem)
-		return (NULL);
-	while (i < total)
+	while (i < 2 && fildes[i] > 0)
 	{
-		*((unsigned char *)mem + i) = '\0';
+		close_(fildes[i]);
+		fildes[i] = 0;
 		i++;
 	}
-	return (mem);
+}
+
+void	close_all(void)
+{
+	t_data	*pipex;
+
+	pipex = get_data();
+	close_fds(pipex->files);
+	close_fds(pipex->pipes);
 }

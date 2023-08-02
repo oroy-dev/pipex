@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:46:40 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 15:45:45 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/libft.h"
+#include "../inc/pipex.h"
 
-void	*ft_calloc(size_t count, size_t size)
+int	main(int argc, char **argv, char **envp)
 {
-	void	*mem;
-	size_t	total;
-	size_t	i;
+	t_data	*pipex;
 
-	if (count >= SIZE_MAX || size >= SIZE_MAX)
-		return (NULL);
-	i = 0;
-	total = count * size;
-	mem = malloc(total);
-	if (!mem)
-		return (NULL);
-	while (i < total)
+	if (argc < 5)
 	{
-		*((unsigned char *)mem + i) = '\0';
-		i++;
+		ft_putendl_fd("Error: Lower number of arguments than required (5)", 2);
+		exit (EXIT_FAILURE);
 	}
-	return (mem);
+	pipex = get_data();
+	get_pathlist(envp, "PATH=");
+	execute_cmds(argc - 3, argc, argv);
+	close_all();
+	ft_free_tab(pipex->pathlist);
+	ft_free(pipex);
+	return (0);
 }

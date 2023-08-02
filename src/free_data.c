@@ -1,34 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   free_data.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:46:40 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/26 10:12:08 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/31 18:32:33 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/libft.h"
+#include "../inc/pipex.h"
 
-void	*ft_calloc(size_t count, size_t size)
+void	ft_free(void *ptr)
 {
-	void	*mem;
-	size_t	total;
+	if (ptr)
+	{
+		free (ptr);
+		ptr = NULL;
+	}
+}
+
+void	ft_free_tab(char **tab)
+{
 	size_t	i;
 
-	if (count >= SIZE_MAX || size >= SIZE_MAX)
-		return (NULL);
 	i = 0;
-	total = count * size;
-	mem = malloc(total);
-	if (!mem)
-		return (NULL);
-	while (i < total)
+	if (tab)
 	{
-		*((unsigned char *)mem + i) = '\0';
-		i++;
+		while (tab[i])
+		{
+			free (tab[i]);
+			i++;
+		}
+		ft_free(tab);
 	}
-	return (mem);
+}
+
+void	free_data(void)
+{
+	t_data	*pipex;
+
+	pipex = get_data();
+	ft_free_tab(pipex->cmd);
+	ft_free(pipex->cmdpath);
+	ft_free_tab(pipex->pathlist);
+	ft_free(pipex);
 }

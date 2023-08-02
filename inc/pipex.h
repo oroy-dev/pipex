@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/01 13:41:33 by oroy             ###   ########.fr       */
+/*   Updated: 2023/08/02 15:42:45 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ typedef struct s_data
 	int		files[2];
 	char	**pathlist;
 	int		pipes[2];
-	int		savedpipe;
 }	t_data;
 
 void	close_(int fildes);
 void	close_all(void);
-void	close_files(void);
-void	close_pipes(void);
+void	close_fds(int fildes[2]);
+int		dup_(int fildes);
 void	dup2_(int fildes, int fildes2);
+void	execute_cmds(int remaining_cmds, int argc, char **argv);
 void	execve_(char *path, char **cmd, char **envp);
 pid_t	fork_(void);
 void	free_data(void);
@@ -46,7 +46,6 @@ void	open_files(int argc, char **argv);
 void	open_infile(char **argv);
 void	open_outfile(int argc, char **argv);
 void	pipe_(int fildes[2]);
-void	start_execution(int remaining_cmds, int argc, char **argv);
 void	waitpid_(pid_t pid, int *status, int options);
 
 #endif
