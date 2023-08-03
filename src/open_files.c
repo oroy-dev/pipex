@@ -1,31 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   open_files.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:45:45 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/27 11:42:54 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 14:56:16 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-int	main(int argc, char **argv, char **envp)
+void	open_infile(char **argv)
 {
 	t_data	*pipex;
 
-	if (argc < 5)
+	pipex = get_data();
+	pipex->files[0] = open (argv[1], O_RDONLY);
+	if (pipex->files[0] == -1)
 	{
-		ft_putendl_fd("Error: Lower number of arguments than required (5)", 2);
+		perror ("Can't open infile");
+		close_all();
+		free_data();
 		exit (EXIT_FAILURE);
 	}
+}
+
+void	open_outfile(int argc, char **argv)
+{
+	t_data	*pipex;
+
 	pipex = get_data();
-	get_pathlist(envp, "PATH=");
-	execute_cmds(argc - 3, argc, argv);
-	close_all();
-	ft_free_tab(pipex->pathlist);
-	ft_free(pipex);
-	return (0);
+	pipex->files[1] = open (argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (pipex->files[1] == -1)
+	{
+		perror ("Can't open/create outfile");
+		close_all();
+		free_data();
+		exit (EXIT_FAILURE);
+	}
 }

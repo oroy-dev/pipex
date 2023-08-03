@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 18:38:19 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/22 18:16:12 by oroy             ###   ########.fr       */
+/*   Updated: 2023/08/02 15:42:45 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,34 @@
 # include <stdio.h>
 # include <fcntl.h>
 
+typedef struct s_data
+{
+	char	**cmd;
+	char	*cmdpath;
+	int		files[2];
+	char	**pathlist;
+	int		pipes[2];
+}	t_data;
+
 void	close_(int fildes);
-void	close_all_fds(int fds[2][2]);
-void	dup2_(int fildes, int fildes2, int fds[2][2]);
-void	execve_(const char *path, char *const argv[], char *const envp[]);
+void	close_all(void);
+void	close_fds(int fildes[2]);
+int		dup_(int fildes);
+void	dup2_(int fildes, int fildes2);
+void	execute_cmds(int remaining_cmds, int argc, char **argv);
+void	execve_(char *path, char **cmd, char **envp);
+pid_t	fork_(void);
+void	free_data(void);
 void	ft_free(void *ptr);
-pid_t	fork_(int fds[2][2]);
-void	malloc_check(void *maloc, int fds[2][2]);
-void	pipe_(int fds[2][2]);
+void	ft_free_tab(char **tab);
+void	get_cmd_info(char *arg);
+t_data	*get_data(void);
+void	get_pathlist(char **envp, char *path);
+void	malloc_check(void *maloc);
+void	open_files(int argc, char **argv);
+void	open_infile(char **argv);
+void	open_outfile(int argc, char **argv);
+void	pipe_(int fildes[2]);
 void	waitpid_(pid_t pid, int *status, int options);
 
 #endif

@@ -6,31 +6,36 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/21 19:24:38 by oroy             ###   ########.fr       */
+/*   Updated: 2023/08/02 15:42:34 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	close_fds(int num_args, ...)
+void	close_(int fildes)
 {
-	va_list	ap;
-	int	*fildes;
+	if (close (fildes) == -1)
+		perror ("Problem with close() call");
+}
+
+void	close_fds(int fildes[2])
+{
 	int	i;
-	int	j;
 
 	i = 0;
-	va_start (ap, num_args);
-	while (i < num_args)
+	while (i < 2 && fildes[i] > 0)
 	{
-		j = 0;
-		fildes = va_arg (ap, int *);
-		while (fildes[j])
-		{
-			close_(fildes[j]);
-			j++;
-		}
+		close_(fildes[i]);
+		fildes[i] = 0;
 		i++;
 	}
-	va_end (ap);
+}
+
+void	close_all(void)
+{
+	t_data	*pipex;
+
+	pipex = get_data();
+	close_fds(pipex->files);
+	close_fds(pipex->pipes);
 }

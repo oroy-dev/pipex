@@ -6,7 +6,7 @@
 #    By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/05 18:36:54 by oroy              #+#    #+#              #
-#    Updated: 2023/07/18 13:32:50 by oroy             ###   ########.fr        #
+#    Updated: 2023/08/01 14:05:46 by oroy             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,24 +58,10 @@ re: fclean all
 
 # VALGRIND #
 
-PARAM = infile \"cat\" \"grep Make\" \"wc -l\" outfile
+PARAM = infile cat "grep Make" "wc -c" outfile
 
 val: $(NAME)
 	valgrind --leak-check=full \
 	--show-leak-kinds=all \
 	--track-origins=yes \
 	./$(NAME) $(PARAM)
-
-# VISUALIZER #
-
-visual: all
-	./push_swap_visualizer/build/bin/visualizer
-
-visinstall:
-	git clone https://github.com/o-reo/push_swap_visualizer.git && \
-	cd push_swap_visualizer && \
-	mkdir build && \
-	cd build && \
-	cmake .. && \
-	make && \
-	cd ../..

@@ -1,32 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   close_all_fds.c                                    :+:      :+:    :+:   */
+/*   get_data.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/22 18:11:56 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/25 13:20:40 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 14:47:39 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	close_all_fds(int fds[2][2])
+t_data	*get_data(void)
 {
-	int	i;
-	int	j;
+	static t_data	*pipex;
 
-	i = 0;
-	while (i < 2)
+	if (!pipex)
 	{
-		j = 0;
-		while (j < 2)
-		{
-			if (fds[i][j])
-				close_(fds[i][j]);
-			j++;
-		}
-		i++;
+		pipex = ft_calloc(1, sizeof (t_data));
+		malloc_check(pipex);
+		pipex->cmd = NULL;
+		pipex->cmdpath = NULL;
+		pipex->pathlist = NULL;
 	}
+	return (pipex);
 }

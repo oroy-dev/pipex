@@ -1,24 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_null.c                                          :+:      :+:    :+:   */
+/*   free_data.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/18 12:15:55 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/19 13:46:17 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/26 10:12:08 by oroy              #+#    #+#             */
+/*   Updated: 2023/07/31 18:32:33 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	*ft_null(void *rtn)
+void	ft_free(void *ptr)
 {
-	if (!rtn)
+	if (ptr)
 	{
-		ft_putstr_fd("Error: NULL returned", 2);
-		exit (EXIT_FAILURE);
+		free (ptr);
+		ptr = NULL;
 	}
-	else
-		return (rtn);
+}
+
+void	ft_free_tab(char **tab)
+{
+	size_t	i;
+
+	i = 0;
+	if (tab)
+	{
+		while (tab[i])
+		{
+			free (tab[i]);
+			i++;
+		}
+		ft_free(tab);
+	}
+}
+
+void	free_data(void)
+{
+	t_data	*pipex;
+
+	pipex = get_data();
+	ft_free_tab(pipex->cmd);
+	ft_free(pipex->cmdpath);
+	ft_free_tab(pipex->pathlist);
+	ft_free(pipex);
 }

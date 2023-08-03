@@ -1,28 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc_old.c                                    :+:      :+:    :+:   */
+/*   error_handling_dup.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/17 10:44:37 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/12 12:35:34 by oroy             ###   ########.fr       */
+/*   Created: 2023/07/19 13:05:32 by oroy              #+#    #+#             */
+/*   Updated: 2023/08/02 15:06:12 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/libft.h"
+#include "../inc/pipex.h"
 
-void	*ft_calloc(size_t count, size_t size)
+int	dup_(int fildes)
 {
-	void	*mem;
-	size_t	total;
+	int	fildes2;
 
-	if (count >= SIZE_MAX || size >= SIZE_MAX)
-		return (NULL);
-	total = count * size;
-	mem = malloc(total);
-	if (!mem)
-		return (NULL);
-	ft_bzero(mem, total);
-	return (mem);
+	fildes2 = dup (fildes);
+	if (fildes2 == -1)
+	{
+		perror ("Problem with dup2() call");
+		close_all();
+		free_data();
+		exit (EXIT_FAILURE);
+	}
+	return (fildes2);
+}
+
+void	dup2_(int fildes, int fildes2)
+{
+	if (dup2 (fildes, fildes2) == -1)
+	{
+		perror ("Problem with dup2() call");
+		close_all();
+		free_data();
+		exit (EXIT_FAILURE);
+	}
 }
