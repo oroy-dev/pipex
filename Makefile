@@ -6,7 +6,7 @@
 #    By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/05 18:36:54 by oroy              #+#    #+#              #
-#    Updated: 2023/08/01 14:05:46 by oroy             ###   ########.fr        #
+#    Updated: 2023/08/04 15:29:03 by oroy             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,6 @@ NAME = pipex
 
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-LIBFT_SRC_DIR = $(LIBFT_DIR)/src
 LIBFT_SRC = $(wildcard $(LIBFT_SRC_DIR)/*.c)
 
 SRC_DIR = src
@@ -24,22 +23,23 @@ OBJ_DIR = obj
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
-AR = ar rcs
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra
 RM = rm -rf
+
+MK_C = $(MAKE) -C
 
 # ********************************** RULES *********************************** #
 
 # BASIC #
 
-all: $(NAME)
+all: $(LIBFT) $(NAME)
 
-$(NAME): $(LIBFT) $(OBJ_DIR) $(OBJ)
+$(NAME): $(OBJ_DIR) $(OBJ)
 	$(CC) $(CFLAGS) $(LIBFT) $(OBJ) -o $(NAME)
 
 $(LIBFT): $(LIBFT_SRC)
-	cd libft && $(MAKE)
+	$(MK_C) $(LIBFT_DIR)
 
 $(OBJ_DIR):
 	mkdir $@
@@ -48,7 +48,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	cd libft && $(MAKE) clean
+	$(MK_C) $(LIBFT_DIR) clean
 	$(RM) $(OBJ_DIR)
 
 fclean: clean
@@ -58,7 +58,7 @@ re: fclean all
 
 # VALGRIND #
 
-PARAM = infile cat "grep Make" "wc -c" outfile
+PARAM = infile ls "grep ^M" "wc -c" "wc -l" cat ls outfile
 
 val: $(NAME)
 	valgrind --leak-check=full \

@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 17:29:39 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:42:34 by oroy             ###   ########.fr       */
+/*   Updated: 2023/08/03 17:05:26 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	close_(int fildes)
 		perror ("Problem with close() call");
 }
 
-void	close_fds(int fildes[2])
+void	close_tab(int fildes[2])
 {
 	int	i;
 
@@ -36,6 +36,6 @@ void	close_all(void)
 	t_data	*pipex;
 
 	pipex = get_data();
-	close_fds(pipex->files);
-	close_fds(pipex->pipes);
+	close_tab(pipex->files);
+	close_tab(pipex->pipes);
 }

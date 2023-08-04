@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 21:22:26 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 15:45:45 by oroy             ###   ########.fr       */
+/*   Updated: 2023/08/04 14:10:49 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ int	main(int argc, char **argv, char **envp)
 	get_pathlist(envp, "PATH=");
 	execute_cmds(argc - 3, argc, argv);
 	close_all();
-	ft_free_tab(pipex->pathlist);
-	ft_free(pipex);
+	free_data();
 	return (0);
 }

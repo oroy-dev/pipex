@@ -6,7 +6,7 @@
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 11:16:15 by oroy              #+#    #+#             */
-/*   Updated: 2023/08/02 14:57:20 by oroy             ###   ########.fr       */
+/*   Updated: 2023/08/03 17:24:38 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,10 @@ void	get_cmd_info(char *arg)
 	pipex->cmdpath = find_cmd_location(pipex->pathlist, path);
 	ft_free(path);
 	if (!pipex->cmdpath)
-		ft_putendl_fd("Error: Shell command not found/executable", 2);
+	{
+		ft_putstr_fd("Error: Shell command not found/executable: ", 2);
+		ft_putendl_fd(arg, 2);
+		free_data();
+		exit (EXIT_FAILURE);
+	}
 }

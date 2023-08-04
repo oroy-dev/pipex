@@ -3,6 +3,7 @@ inc
 infile
 libft
 obj
+outfile
 pipex
+pipex.dSYM
 src
-src_bck
