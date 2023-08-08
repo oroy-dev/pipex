@@ -19,7 +19,7 @@ int	dup_(int fildes)
 	fildes2 = dup (fildes);
 	if (fildes2 == -1)
 	{
-		perror ("Problem with dup2() call");
+		perror ("Problem with dup() call");
 		close_all();
 		free_data();
 		exit (EXIT_FAILURE);
