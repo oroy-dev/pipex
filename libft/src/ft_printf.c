@@ -5,66 +5,53 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: oroy <oroy@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/24 20:37:25 by oroy              #+#    #+#             */
-/*   Updated: 2023/07/19 13:46:22 by oroy             ###   ########.fr       */
+/*   Created: 2023/11/21 12:28:49 by oroy              #+#    #+#             */
+/*   Updated: 2023/11/30 14:03:39 by oroy             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/libft.h"
 
-static int	write_arg(char c, void *arg, int fd)
+static int	check_type(char c, va_list ap, int fd)
 {
-	int	nbr;
-
-	nbr = 0;
 	if (c == 'c')
-		nbr = ft_putchar_rtn_fd((char)arg, fd);
+		return (ft_putchar_fd(va_arg(ap, int), fd));
 	else if (c == 's')
-	{
-		if (!arg)
-			return (ft_putstr_fd("(null)", fd));
-		nbr = ft_putstr_fd((char *)arg, fd);
-	}
+		return (print_s(va_arg(ap, char *), fd));
 	else if (c == 'p')
-	{
-		nbr = ft_putstr_fd("0x", fd);
-		if (nbr == -1)
-			return (-1);
-		nbr = ft_add(ft_puthex_rtn_fd((unsigned long)arg, c, fd), nbr);
-	}
+		return (print_p(va_arg(ap, unsigned long), fd));
 	else if (c == 'd' || c == 'i')
-		nbr = ft_putnbr_rtn_fd((int)arg, fd);
+		return (print_int(va_arg(ap, int), fd));
 	else if (c == 'u')
-		nbr = ft_putnbr_rtn_fd((unsigned int)arg, fd);
-	else if (c == 'x' || c == 'X')
-		nbr = ft_puthex_rtn_fd((unsigned int)arg, c, fd);
-	return (nbr);
+		return (print_uint(va_arg(ap, unsigned int), fd));
+	else if (c == 'x')
+		return (print_hex(va_arg(ap, unsigned int), 'x', fd));
+	else if (c == 'X')
+		return (print_hex(va_arg(ap, unsigned int), 'X', fd));
+	else if (c == '%')
+		return (ft_putchar_fd('%', fd));
+	return (0);
 }
 
 int	ft_printf(const char *s, ...)
 {
-	va_list	valist;
-	size_t	i;
-	int		nbr;
+	int		count;
+	int		fd;
+	int		i;
+	va_list	ap;
 
-	if (!s)
-		return (0);
 	i = 0;
-	nbr = 0;
-	va_start(valist, s);
-	while (s[i] && nbr > -1)
+	fd = 1;
+	count = 0;
+	va_start (ap, s);
+	while (s[i])
 	{
 		if (s[i] == '%')
-		{
-			if (s[++i] == '%')
-				nbr = ft_add(ft_putchar_rtn_fd('%', 1), nbr);
-			else
-				nbr = ft_add(write_arg(s[i], va_arg(valist, void *), 1), nbr);
-		}
+			count += check_type(s[++i], ap, fd);
 		else
-			nbr = ft_add(ft_putchar_rtn_fd(s[i], 1), nbr);
+			count += ft_putchar_fd(s[i], fd);
 		i++;
 	}
-	va_end(valist);
-	return (nbr);
+	va_end (ap);
+	return (count);
 }
